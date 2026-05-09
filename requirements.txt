@@ -1,0 +1,9 @@
+ollama
+faster-whisper
+playwright
+flask
+flask-socketio
+psutil
+customtkinter
+SpeechRecognition
+pyttsx3

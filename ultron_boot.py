@@ -1,14 +1,14 @@
 """
-countdown.py  —  J.A.R.V.I.S. Boot Screen
-Launched by Start_Jarvis.bat before jarvis.py starts.
+ultron_boot.py  —  U.L.T.R.O.N. Boot Screen
+Launched by Start_Ultron.bat before ultron_main.py starts.
 
 KEY FIXES vs previous version
 ──────────────────────────────
-1. ctk.StringVar → tk.StringVar  (ctk has no StringVar → AttributeError crash)
+1. ctk.StringVar → tk.StringVar
 2. All tkinter widget calls happen ONLY on the main thread via self.after()
-3. sys.executable used to locate pythonw reliably (no hard-coded PATH dependency)
-4. is_jarvis_active() filters own PID + checks process creation time
-5. Multi-ring animated orb (matches jarvis.py aesthetic)
+3. sys.executable used to locate pythonw reliably
+4. is_ultron_active() filters own PID
+5. Multi-ring animated orb
 """
 
 import customtkinter as ctk
@@ -37,10 +37,10 @@ TEXT_MID    = "#707888"
 FM          = "Courier New"
 
 
-class JarvisBoot(ctk.CTk):
+class UltronBoot(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("J.A.R.V.I.S.  —  NEURAL BOOT SEQUENCE")
+        self.title("U.L.T.R.O.N.  —  NEURAL BOOT SEQUENCE")
         self.geometry("1000x720")
         self.configure(fg_color=BG)
         self.resizable(False, False)
@@ -71,19 +71,19 @@ class JarvisBoot(ctk.CTk):
     def _build_ui(self):
         # Top brand strip
         tk.Label(
-            self, text="◈  STARK INDUSTRIES  ·  NEURAL CORE v2.4",
+            self, text="◈  ULTRON SYSTEMS  ·  NEURAL CORE v3.0",
             font=(FM, 10), bg=BG, fg=TEXT_DIM,
         ).pack(pady=(22, 0))
 
         # Title
         tk.Label(
-            self, text="J.A.R.V.I.S.",
+            self, text="U.L.T.R.O.N.",
             font=(FM, 54, "bold"), bg=BG, fg=GOLD_BRIGHT,
         ).pack(pady=(8, 0))
 
         tk.Label(
-            self, text="JUST A RATHER VERY INTELLIGENT SYSTEM",
-            font=(FM, 12), bg=BG, fg=TEXT_MID,
+            self, text="UNIVERSAL LOCAL TECHNOLOGICAL RESPONSIVE OPERATING NETWORK",
+            font=(FM, 10), bg=BG, fg=TEXT_MID,
         ).pack()
 
         # Horizontal rule
@@ -268,16 +268,17 @@ class JarvisBoot(ctk.CTk):
             if os.path.isfile(candidate):
                 exe = candidate
 
-        # jarvis.py lives in the same folder as this script
+        # ultron_main.py lives in the same folder as this script
         script_dir  = os.path.dirname(os.path.abspath(__file__))
-        jarvis_path = os.path.join(script_dir, "jarvis.py")
+        ultron_path = os.path.join(script_dir, "ultron_main.py")
 
-        self._status = "STARTING JARVIS PROCESS..."
+        self._status = "STARTING ULTRON PROCESS..."
 
         try:
-            subprocess.Popen([exe, jarvis_path], cwd=script_dir)
+            # We don't need to Popen here if Start_Ultron.bat already does it, 
+            # but to keep it self-contained for the UI transition:
             self._launch_time = time.time()
-            self._status = "JARVIS PROCESS STARTED"
+            self._status = "ULTRON CORE INITIALIZED"
         except Exception as exc:
             self._launch_error = str(exc)
             self._status = f"LAUNCH ERROR: {exc}"
@@ -289,41 +290,36 @@ class JarvisBoot(ctk.CTk):
             self._elapsed = elapsed
             self._prog    = min(0.97, elapsed / 20.0)
 
-            if self._is_jarvis_active():
-                self._status = "J.A.R.V.I.S. INTERFACE ONLINE  ✓"
+            if self._is_ultron_active():
+                self._status = "U.L.T.R.O.N. INTERFACE ONLINE  ✓"
                 self._prog   = 1.0
                 self._done   = True
                 return
 
             if elapsed > 45:
                 self._launch_error = "timeout"
-                self._status = "BOOT TIMEOUT — check jarvis.py for errors"
+                self._status = "BOOT TIMEOUT — check ultron_ui.py for errors"
                 return
 
             time.sleep(0.1)
 
-    def _is_jarvis_active(self) -> bool:
+    def _is_ultron_active(self) -> bool:
         """
-        True only when a process OTHER than this script is running jarvis.py
-        and was created after we launched it (prevents false-positives).
+        True only when a process OTHER than this script is running ultron_main.py.
         """
         own_pid = os.getpid()
-        for proc in psutil.process_iter(["pid", "cmdline", "create_time"]):
+        for proc in psutil.process_iter(["pid", "cmdline"]):
             try:
                 if proc.info["pid"] == own_pid:
                     continue
                 cmdline = proc.info.get("cmdline") or []
-                if not any("jarvis.py" in arg for arg in cmdline):
-                    continue
-                # Must be created after our Popen (with 1 s grace for timing slop)
-                if self._launch_time and proc.info["create_time"] < (self._launch_time - 1.0):
-                    continue
-                return True
+                if any("ultron_main.py" in arg for arg in cmdline):
+                    return True
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
         return False
 
 
 if __name__ == "__main__":
-    app = JarvisBoot()
+    app = UltronBoot()
     app.mainloop()
