@@ -298,7 +298,7 @@ class UltronBoot(ctk.CTk):
 
             if elapsed > 45:
                 self._launch_error = "timeout"
-                self._status = "BOOT TIMEOUT — check ultron_ui.py for errors"
+                self._status = "BOOT TIMEOUT — check ultron_main.py for errors"
                 return
 
             time.sleep(0.1)
