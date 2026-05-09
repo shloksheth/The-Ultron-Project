@@ -1,9 +1,8 @@
 ollama
 faster-whisper
 playwright
-flask
-flask-socketio
 psutil
+Pillow
 customtkinter
 SpeechRecognition
 pyttsx3

@@ -66,8 +66,8 @@ if "!PYTHON_CMD!"=="" (
 )
 
 echo      Using: !PYTHON_CMD!
-:: Start the main system in the background
-start /min "" !PYTHON_CMD! "%~dp0ultron_main.py"
+:: Start the main system
+start "" !PYTHON_CMD! "%~dp0ultron_main.py"
 :: Run the boot screen in the foreground
 !PYTHON_CMD! "%~dp0ultron_boot.py"
 

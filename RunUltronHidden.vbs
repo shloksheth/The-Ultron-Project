@@ -35,7 +35,7 @@ Function IsUltronRunning()
         "WHERE Name='python.exe' OR Name='pythonw.exe'")
 
     For Each oProc In oProcs
-        If InStr(LCase(oProc.CommandLine), "ultron_ui.py") > 0 Then
+        If InStr(LCase(oProc.CommandLine), "ultron_main.py") > 0 Then
             IsUltronRunning = True
             Exit Function
         End If
@@ -84,10 +84,10 @@ Sub CloseUltron()
         "SELECT * FROM Win32_Process " & _
         "WHERE Name='python.exe' OR Name='pythonw.exe'")
 
-    ' Terminate any python process running ultron_ui.py OR ultron_boot.py
+    ' Terminate any python process running ultron_main.py OR ultron_boot.py
     For Each oProc In oProcs
         sCmdLine = LCase(oProc.CommandLine)
-        If InStr(sCmdLine, "ultron_ui.py") > 0 Or InStr(sCmdLine, "ultron_boot.py") > 0 Then
+        If InStr(sCmdLine, "ultron_main.py") > 0 Or InStr(sCmdLine, "ultron_boot.py") > 0 Then
             oProc.Terminate
         End If
     Next

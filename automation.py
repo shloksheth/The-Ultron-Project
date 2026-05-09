@@ -4,21 +4,21 @@ import time
 import base64
 
 class DeltamathAutomator:
-    def __init__(self, credentials, socketio=None):
+    def __init__(self, credentials, ui=None):
         self.credentials = credentials
         self.url = "https://www.deltamath.com/"
-        self.socketio = socketio
+        self.ui = ui
 
     def log(self, message, type='system'):
-        if self.socketio:
-            self.socketio.emit('log', {'message': message, 'type': type})
+        if self.ui:
+            self.ui.log(message, type)
         print(f"[Automation] {message}")
 
     async def update_preview(self, page):
-        if self.socketio:
+        if self.ui:
             screenshot = await page.screenshot()
             b64_shot = base64.b64encode(screenshot).decode('utf-8')
-            self.socketio.emit('browser_update', {'status': 'RUNNING', 'screenshot': b64_shot})
+            self.ui.update_browser('RUNNING', b64_shot)
 
     async def login_and_complete(self):
         async with async_playwright() as p:
@@ -56,9 +56,9 @@ class DeltamathAutomator:
                 self.log(f"Automation error: {e}", type='error')
             finally:
                 await browser.close()
-                if self.socketio:
-                    self.socketio.emit('browser_update', {'status': 'COMPLETED'})
+                if self.ui:
+                    self.ui.update_browser('COMPLETED')
 
-def run_automation(creds, socketio):
-    automator = DeltamathAutomator(creds, socketio)
+def run_automation(creds, ui):
+    automator = DeltamathAutomator(creds, ui)
     asyncio.run(automator.login_and_complete())
